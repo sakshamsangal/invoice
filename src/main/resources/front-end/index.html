@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="grid.css">
+    <title>Document</title>
+</head>
+<body>
+<div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+        <h3>Post invoice data</h3>
+        <form>
+            <table>
+                <tr>
+                    <td>Shipping address</td>
+                    <td><textarea id="sa" rows="3" cols="20" required></textarea></td>
+                </tr>
+                <tr>
+                    <td>Product name</td>
+                    <td><input type="text" id="pn" required/></td>
+                </tr>
+
+                <tr>
+                    <td>Price</td>
+                    <td><input type="number" id="p" required/></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button  type="button" onclick="postData()">Submit</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <p id="out"></p>
+    </div>
+</div>
+
+<script>
+    x = document.getElementById('sa')
+    y = document.getElementById('pn')
+    z = document.getElementById('p')
+    out = document.getElementById('out')
+
+    function clear(){
+        x.value = ''
+        y.value = ''
+        z.value = ''
+    }
+    function postData() {
+        let sendObj = {
+            "ship_add": x.value,
+            "prod_name": y.value,
+            "price": parseFloat(z.value)
+        }
+        console.log(sendObj)
+        try {
+            fetch(`http://localhost:8080/invoice`, {
+                body: JSON.stringify(sendObj),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                method: "post",
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    out.innerText = 'Data saved successfully'
+                    console.log("Success: ", data);
+                    clear()
+                })
+                .catch((err) => {
+                    out.innerText = err
+                    console.error(err);
+                });
+        } catch (e) {
+            alert('error')
+            out.innerText = e.toString()
+        }
+
+    }
+</script>
+</body>
+</html>
